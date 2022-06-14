@@ -1,0 +1,20 @@
+[package]
+name = "flc16"
+version = "0.1.0"
+edition = "2021"
+build = "build.rs"
+
+[build-dependencies]
+winres = "0.1"
+
+[dependencies]
+pixels = "0.9.0"
+rand = "0.8.4"
+winit = "0.26"
+winit_input_helper = "0.12"
+env_logger = "0.9"
+log = "0.4"
+image = "0.24.2"
+regex = "1"
+rodio = "0.15.0"
+native-dialog = "0.6.3"
