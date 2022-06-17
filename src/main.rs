@@ -1,13 +1,14 @@
 #![deny(clippy::all)]
 #![forbid(unsafe_code)]
-//#![windows_subsystem = "windows"]
+#![windows_subsystem = "windows"]
 
 use image;
 use log::error;
 use native_dialog::FileDialog;
 use pixels::{Error, Pixels, SurfaceTexture};
-use rodio::source::{SineWave, Source};
+use rodio::source::Source;
 use rodio::{OutputStream, Sink};
+use waves::{TriangleWave, SquareWave, Noise};
 use std::env;
 use std::fs;
 use std::path::Path;
@@ -23,6 +24,7 @@ use winit::window::{Icon, WindowBuilder};
 use winit_input_helper::WinitInputHelper;
 mod blackspace;
 mod eval;
+mod waves;
 
 const WIDTH: u32 = 256 * 2;
 const HEIGHT: u32 = 144 * 2;
@@ -137,36 +139,12 @@ fn main() -> Result<(), Error> {
                     return;
                 }
 
-                world.heap[0xff01] = if input.key_held(VirtualKeyCode::Up) {
-                    1
-                } else {
-                    0
-                };
-                world.heap[0xff02] = if input.key_held(VirtualKeyCode::Down) {
-                    1
-                } else {
-                    0
-                };
-                world.heap[0xff03] = if input.key_held(VirtualKeyCode::Left) {
-                    1
-                } else {
-                    0
-                };
-                world.heap[0xff04] = if input.key_held(VirtualKeyCode::Right) {
-                    1
-                } else {
-                    0
-                };
-                world.heap[0xff05] = if input.key_held(VirtualKeyCode::Z) {
-                    1
-                } else {
-                    0
-                };
-                world.heap[0xff06] = if input.key_held(VirtualKeyCode::X) {
-                    1
-                } else {
-                    0
-                };
+                world.heap[0xff01] = if input.key_held(VirtualKeyCode::Up) { 1 } else { 0 };
+                world.heap[0xff02] = if input.key_held(VirtualKeyCode::Down) { 1 } else { 0 };
+                world.heap[0xff03] = if input.key_held(VirtualKeyCode::Left) { 1 } else { 0 };
+                world.heap[0xff04] = if input.key_held(VirtualKeyCode::Right) { 1 } else { 0 };
+                world.heap[0xff05] = if input.key_held(VirtualKeyCode::Z) { 1 } else { 0 };
+                world.heap[0xff06] = if input.key_held(VirtualKeyCode::X) { 1 } else { 0 };
 
                 let mut addr = [0u16; 6];
                 if input.key_pressed(VirtualKeyCode::Up) {
@@ -250,21 +228,41 @@ impl World {
 
         thread::spawn(move || {
             let (_stream, stream_handle) = OutputStream::try_default().unwrap();
-            let mut sink = Sink::try_new(&stream_handle).unwrap();
+            let mut trisink = Sink::try_new(&stream_handle).unwrap();
+            let mut squsink = Sink::try_new(&stream_handle).unwrap();
+            let mut noisink = Sink::try_new(&stream_handle).unwrap();
             for received in rx {
                 let args = received.as_str().split(" ").collect::<Vec<&str>>();
                 match args[0] {
                     "beep" => {
-                        let source = SineWave::new(FREQS[args[1].parse::<u8>().unwrap() as usize])
+                        let source = TriangleWave::new(FREQS[args[1].parse::<u8>().unwrap() as usize])
                             .take_duration(Duration::from_secs_f32(
                                 args[2].parse::<f32>().unwrap() * 0.1,
                             ))
                             .amplify(0.20);
-                        sink.append(source);
+                        trisink.append(source);
+                    }
+                    "boop" => {
+                        let source = SquareWave::new(FREQS[args[1].parse::<u8>().unwrap() as usize])
+                            .take_duration(Duration::from_secs_f32(
+                                args[2].parse::<f32>().unwrap() * 0.1,
+                            ))
+                            .amplify(0.20);
+                        squsink.append(source);
+                    }
+                    "noise" => {
+                        let source = Noise::new()
+                            .take_duration(Duration::from_secs_f32(
+                                args[1].parse::<f32>().unwrap() * 0.1,
+                            ))
+                            .amplify(0.20);
+                        noisink.append(source);
                     }
                     "empty" => {
-                        sink.stop();
-                        sink = Sink::try_new(&stream_handle).unwrap();
+                        trisink.stop(); squsink.stop(); noisink.stop();
+                        trisink = Sink::try_new(&stream_handle).unwrap();
+                        squsink = Sink::try_new(&stream_handle).unwrap();
+                        noisink = Sink::try_new(&stream_handle).unwrap();
                     }
                     _ => {}
                 }

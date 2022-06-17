@@ -191,13 +191,22 @@ pub fn bcode(bytes: &[u8], pix_buffer: &mut [[u8; 256]; 144], spawned: bool, spa
                     heap = evaled.2;
                 }
             }
-            0x1c => {
+            0x1c => { // beep
                 let a = stack.pop().unwrap().to_owned();
                 let b = stack.pop().unwrap().to_owned();
                 tx.send(format!("beep {} {}", a, b)).unwrap();
             }
-            0x1d => {
+            0x1d => { // empty
                 tx.send("empty".to_string()).unwrap();
+            }
+            0x1e => { // boop
+                let a = stack.pop().unwrap().to_owned();
+                let b = stack.pop().unwrap().to_owned();
+                tx.send(format!("boop {} {}", a, b)).unwrap();
+            }
+            0x1f => { // noise
+                let a = stack.pop().unwrap().to_owned();
+                tx.send(format!("noise {}", a)).unwrap();
             }
             _ => {
                 panic!("Unknown Command {}", byte);

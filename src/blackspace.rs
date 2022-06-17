@@ -130,6 +130,12 @@ pub fn bs() {
                 "beep" => {
                     bytes.push(0x1c);
                 }
+                "boop" => {
+                    bytes.push(0x1e);
+                }
+                "noise" => {
+                    bytes.push(0x1f);
+                }
                 "empty" => {
                     bytes.push(0x1d);
                 }
