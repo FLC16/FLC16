@@ -99,7 +99,7 @@ fn main() -> Result<(), Error> {
             world.stack = evaled.1;
             world.routines = evaled.0;
         } else {
-            let image = image::open("icon/nodisk.png")
+            let image = image::open(concat!(env!("CARGO_MANIFEST_DIR"), "/icon/nodisk.png"))
                 .expect("Failed to open icon path")
                 .into_rgb8();
             let mut x = 0;
