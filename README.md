@@ -1,6 +1,4 @@
 # FLC16
-An emulator for a console that does not exist.
-
 Unlike PICO-8 or TIC-80, FLC16 does not interpret Lua code. It runs on it's own machine code compiled from it's own programming language, named Blackspace.  
 It has a very limited set of features, with only 6 buttons (Arrow keys + Z and X), a 256x144 display, and 3 audio channels. These design choices were not born from laziness alone, but also an encouragement to challenge oneself to push their own limits. 
 
