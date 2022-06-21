@@ -1,5 +1,5 @@
 ## Introducing Blackspace
-Since FLC16 uses a kind of machine code that has never been seen before, I needed a way to assembly said code without wanting to tear my eyes out.
+Since FLC16 uses a kind of machine code that has never been seen before, I needed a way to assemble said code without wanting to tear my eyes out.
 
 Blackspace is an assembly-like programming language created for FLC16 that was inspired by the [Whitespace](https://en.wikipedia.org/wiki/Whitespace_%28programming_language%29) esoteric language. Don't worry, this is much easier to read.
 

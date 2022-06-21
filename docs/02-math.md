@@ -55,3 +55,5 @@ push 15 2
 modulo
 # Result: [ 1 ]
 ```
+
+But what good does this do if we don't have anywhere to store these numbers? Let's learn about [memory](03-mem.md)
