@@ -61,8 +61,7 @@ fn main() -> Result<(), Error> {
         let mut input = WinitInputHelper::new();
         let window = {
             let size = LogicalSize::new(WIDTH as f64, HEIGHT as f64);
-            let path = concat!(env!("CARGO_MANIFEST_DIR"), "/icon/icon.png");
-            let icon = load_icon(Path::new(path));
+            let icon = load_icon();
             WindowBuilder::new()
                 .with_title("FLC16")
                 .with_resizable(false)
@@ -99,7 +98,8 @@ fn main() -> Result<(), Error> {
             world.stack = evaled.1;
             world.routines = evaled.0;
         } else {
-            let image = image::open(concat!(env!("CARGO_MANIFEST_DIR"), "/icon/nodisk.png"))
+            let image = image::load_from_memory(
+                include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/icon/nodisk.png")))
                 .expect("Failed to open icon path")
                 .into_rgb8();
             let mut x = 0;
@@ -368,9 +368,9 @@ impl World {
     }
 }
 
-fn load_icon(path: &Path) -> Icon {
+fn load_icon() -> Icon {
     let (icon_rgba, icon_width, icon_height) = {
-        let image = image::open(path)
+        let image = image::load_from_memory(include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/icon/icon.png")))
             .expect("Failed to open icon path")
             .into_rgba8();
         let (width, height) = image.dimensions();
