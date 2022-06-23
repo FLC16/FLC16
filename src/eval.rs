@@ -39,7 +39,7 @@ pub fn bcode(bytes: &[u8], pix_buffer: &mut [[u8; 256]; 144], spawned: bool, spa
             0x06 => { // add
                 let a = stack.pop().unwrap().to_owned() as u16;
                 let b = stack.pop().unwrap().to_owned() as u16;
-                stack.push(((a+b) % 255) as u8);
+                stack.push(((a+b) % 256) as u8);
             }
             0x07 => { // subtract
                 let a = stack.pop().unwrap().to_owned() as i16;
@@ -51,7 +51,7 @@ pub fn bcode(bytes: &[u8], pix_buffer: &mut [[u8; 256]; 144], spawned: bool, spa
             0x08 => { // multiply
                 let a = stack.pop().unwrap().to_owned() as u16;
                 let b = stack.pop().unwrap().to_owned() as u16;
-                stack.push(((a*b) % 255) as u8);
+                stack.push(((a*b) % 256) as u8);
             }
             0x09 => { // divide
                 let a = stack.pop().unwrap().to_owned();
