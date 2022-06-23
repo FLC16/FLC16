@@ -14,6 +14,8 @@ It has three sound channels, one triangle, one square, and one noise.
 `flc16 blackspace code.bs` - Compile blackspace file `code.bs` into machine code
 
 ## Color index
+FLC16 uses the [Go-Line Palette](https://lospec.com/palette-list/go-line)
+
 * 0 Black #000000
 * 1 Brown #ab5236
 * 2 White #fff1e8
