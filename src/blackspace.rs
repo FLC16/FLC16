@@ -3,6 +3,7 @@ use std::fs;
 use std::path::Path;
 use regex::Regex;
 use std::io::Write;
+use std::collections::HashMap;
 
 pub fn bs() {
     let args: Vec<String> = env::args().collect();
@@ -11,17 +12,37 @@ pub fn bs() {
             .expect("Something went wrong reading the file");
         let formatted = Regex::new(r"\r?\n").unwrap().replace_all(&contents, ";").to_lowercase();
         let commands = formatted.split(';');
+        let mut aliases: HashMap<String, u16> = HashMap::new();
         let mut bytes: Vec<u8> = Vec::new();
         for command in commands {
             if command.starts_with('#') {continue}
             let mut segs = command.trim().split(' ');
             match segs.next().unwrap() {
+                "alias" => {
+                    let label = segs.next().unwrap();
+                    let mut address = segs.next().unwrap();
+                    let radix: u32 = if address.starts_with("0x") { 16 } else { 10 };
+                    if radix == 16 { address = &address[2..address.len()] }
+                    let addr = u16::from_str_radix(address, radix).unwrap();
+                    aliases.insert(label.to_string(), addr);
+                }
                 "push" => {
                     for mut byte in segs {
                         bytes.push(3);
-                        let radix: u32 = if byte.starts_with("0x") { 16 } else { 10 };
-                        if radix == 16 { byte = &byte[2..byte.len()] }
-                        bytes.push(u8::from_str_radix(byte, radix).unwrap());
+                        if byte.starts_with("$") {
+                            match aliases.get(&byte[1..byte.len()]) {
+                                Some(addr) => {
+                                    bytes.push((addr >> 8) as u8);
+                                    bytes.push(3);
+                                    bytes.push(addr.to_owned() as u8);
+                                },
+                                None => panic!("{} is not a valid alias", byte)
+                            }
+                        } else {
+                            let radix: u32 = if byte.starts_with("0x") { 16 } else { 10 };
+                            if radix == 16 { byte = &byte[2..byte.len()] }
+                            bytes.push(u8::from_str_radix(byte, radix).unwrap());
+                        }
                     }
                 }
                 "store" => {
@@ -30,11 +51,21 @@ pub fn bs() {
                 "routine" => {
                     bytes.push(0x0b);
                     let mut byte = segs.next().unwrap();
-                    let radix: u32 = if byte.starts_with("0x") { 16 } else { 10 };
-                    if radix == 16 { byte = &byte[2..byte.len()] }
-                    let addr = u16::from_str_radix(byte, radix).unwrap();
-                    bytes.push((addr >> 8) as u8);
-                    bytes.push(addr as u8);
+                    if byte.starts_with("$") {
+                        match aliases.get(&byte[1..byte.len()]) {
+                            Some(addr) => {
+                                bytes.push((addr >> 8) as u8);
+                                bytes.push(addr.to_owned() as u8);
+                            },
+                            None => panic!("{} is not a valid alias", byte)
+                        }
+                    } else {
+                        let radix: u32 = if byte.starts_with("0x") { 16 } else { 10 };
+                        if radix == 16 { byte = &byte[2..byte.len()] }
+                        let addr = u16::from_str_radix(byte, radix).unwrap();
+                        bytes.push((addr >> 8) as u8);
+                        bytes.push(addr as u8);
+                    }
                 }
                 "duplicate" => {
                     bytes.push(0x0e);

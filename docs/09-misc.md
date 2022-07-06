@@ -52,3 +52,35 @@ push 5
 repeat 0xdddd
 # repeats the routine 5 times
 ```
+
+Make your code look smaller by using semicolons `;` to separate commands
+```bs
+push 1 2; get; push 1; add; push 1 2; store
+```
+
+Keep track of your memory addresses and routines by using an `alias`
+```bs
+alias x_pos 0x0001
+alias y_pos 0x0002
+alias draw 0xffff
+alias update 0xfffe
+
+# use a dollar sign ($) to reference an alias
+
+# set y pos to 5
+push 5 $y_pos; store
+
+routine $draw
+    # aliases are always u16 numbers, meaning they take up 2 spaces in the stack
+    push 2
+    push $y_pos; get
+    push $x_pos; get
+    write
+end
+
+routine $update
+    push $x_pos; get
+    push 1; add
+    push $x_pos; store
+end
+```
