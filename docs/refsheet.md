@@ -90,6 +90,8 @@ FLC16 uses the [Go-Line Palette](https://lospec.com/palette-list/go-line)
 * `0xFF04` Right arrow key held (boolean)
 * `0xFF05` Z held (boolean)
 * `0xFF06` X held (boolean)
+* `0xFF0D` Disable sprite wrapping (boolean) (Default 0)
+* `0xFF0E` Clear pixel buffer on draw (boolean) (Default 1)
 * `0xFF0F` Time interval to call `0xFF0F` routine (Integer) (Default 2)
 
 Remember that the Heap and the Routine do NOT share the same address space.
