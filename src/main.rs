@@ -350,7 +350,9 @@ impl World {
             pixel.copy_from_slice(&rgba);
         }
         if self.routines[0xffff] != 0 {
-            self.pix_buffer = [[0u8; 256]; 144];
+            if self.heap[0xff0e] == 1 {
+                self.pix_buffer = [[0u8; 256]; 144];
+            }
             let evaled = eval::bcode(
                 &self.bytes,
                 &mut self.pix_buffer,
