@@ -10,6 +10,7 @@ pub fn bcode(
     mut stack: Vec<u8>,
     mut routines: Vec<u32>,
     tx: &Sender<String>,
+    mut palette: &mut [[u8; 4]; 16]
 ) -> (Vec<u32>, Vec<u8>, Vec<u8>) {
     let mut index = if spawned { spawn_index } else { 0 as usize };
     while &index < &bytes.len() {
@@ -108,6 +109,7 @@ pub fn bcode(
                     stack.clone(),
                     routines.clone(),
                     tx,
+                    &mut palette
                 );
                 stack = evaled.1;
                 heap = evaled.2;
@@ -153,6 +155,7 @@ pub fn bcode(
                         stack.clone(),
                         routines.clone(),
                         tx,
+                        &mut palette
                     );
                     stack = evaled.1;
                     heap = evaled.2;
@@ -175,6 +178,7 @@ pub fn bcode(
                         stack.clone(),
                         routines.clone(),
                         tx,
+                        &mut palette
                     );
                     stack = evaled.1;
                     heap = evaled.2;
@@ -199,7 +203,7 @@ pub fn bcode(
                 let mut y = stack.pop().unwrap().to_owned() as usize;
                 index += 1;
                 while bytes[index] != 0xff {
-                    if bytes[index] != 0xfe {
+                    if bytes[index] != 0xfe && bytes[index] != 0xee {
                         let color_index = bytes[index];
                         if heap[0xff0d] == 0 {
                             if y >= 144 {
@@ -212,9 +216,12 @@ pub fn bcode(
                         pix_buffer[y][x] = color_index;
                         x += 1;
                         index += 1;
-                    } else {
+                    } else if bytes[index] == 0xfe {
                         x = origx;
                         y += 1;
+                        index += 1;
+                    } else {
+                        x += 1;
                         index += 1;
                     }
                 }
@@ -263,6 +270,7 @@ pub fn bcode(
                         stack.clone(),
                         routines.clone(),
                         tx,
+                        &mut palette
                     );
                     stack = evaled.1;
                     heap = evaled.2;
@@ -288,6 +296,15 @@ pub fn bcode(
                 // noise
                 let a = stack.pop().unwrap().to_owned();
                 tx.send(format!("noise {}", a)).unwrap();
+            }
+            0x20 => {
+                // color
+                let color_index = bytes[index + 1];
+                let r = bytes[index + 2];
+                let g = bytes[index + 3];
+                let b = bytes[index + 4];
+                palette[color_index as usize] = [r,g,b,0xff];
+                index += 4;
             }
             _ => {
                 panic!("Unknown Command {}", byte);

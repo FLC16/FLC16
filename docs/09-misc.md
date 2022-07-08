@@ -84,3 +84,10 @@ routine $update
     push $x_pos; store
 end
 ```
+
+The color palette shipped with FLC16 is awesome, but some people may want to change it! Thankfully, I've added a `color` command to change the indexed colors  
+It takes 4 arguments: Color index, R, G, and B
+```bs
+# change the 3rd color from white to pink (remember indexes start at 0, so the index will be 2)
+color 2 0xd1 0xa0 0xf2
+```

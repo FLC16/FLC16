@@ -32,6 +32,21 @@ pub fn bs() {
                     let addr = u16::from_str_radix(address, radix).unwrap();
                     aliases.insert(label.to_string(), addr);
                 }
+                "color" => {
+                    let mut i: u8 = 0;
+                    bytes.push(0x20);
+                    for mut byte in segs {
+                        let radix: u32 = if byte.starts_with("0x") { 16 } else { 10 };
+                        if radix == 16 {
+                            byte = &byte[2..byte.len()]
+                        }
+                        bytes.push(u8::from_str_radix(byte, radix).unwrap());
+                        i += 1;
+                        if i == 5 {
+                            panic!("Too many arguments to color command");
+                        }
+                    }
+                }
                 "push" => {
                     for mut byte in segs {
                         bytes.push(3);

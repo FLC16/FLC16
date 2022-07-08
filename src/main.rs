@@ -52,6 +52,7 @@ struct World {
     timer: Instant,
     counter: f32,
     tx: Sender<String>,
+    palette: [[u8; 4]; 16]
 }
 
 fn main() -> Result<(), Error> {
@@ -92,6 +93,7 @@ fn main() -> Result<(), Error> {
                 world.stack,
                 world.routines,
                 &world.tx,
+                &mut world.palette
             );
             world.initialized = true;
             world.heap = evaled.2;
@@ -184,6 +186,7 @@ fn main() -> Result<(), Error> {
                                 world.stack.clone(),
                                 world.routines.clone(),
                                 &world.tx,
+                                &mut world.palette
                             );
                             world.initialized = true;
                             world.heap = evaled.2;
@@ -205,6 +208,7 @@ fn main() -> Result<(), Error> {
                             world.stack.clone(),
                             world.routines.clone(),
                             &world.tx,
+                            &mut world.palette
                         );
                         world.heap = evaled.2;
                         world.stack = evaled.1;
@@ -278,6 +282,23 @@ impl World {
             timer: Instant::now(),
             counter: 0.0,
             tx,
+            palette: [[0x00, 0x00, 0x00, 0xff],
+                [0xab, 0x52, 0x36, 0xff],
+                [0xff, 0xf1, 0xe8, 0xff],
+                [0xff, 0x84, 0x26, 0xff],
+                [0x5f, 0x57, 0x4f, 0xff],
+                [0xff, 0xdd, 0x34, 0xff],
+                [0x50, 0xe1, 0x12, 0xff],
+                [0x3f, 0xa6, 0x6f, 0xff],
+                [0x00, 0xff, 0xcc, 0xff],
+                [0x29, 0xad, 0xff, 0xff],
+                [0x36, 0x59, 0x87, 0xff],
+                [0x00, 0x33, 0xff, 0xff],
+                [0xc2, 0xc3, 0xc7, 0xff],
+                [0x43, 0x00, 0x67, 0xff],
+                [0x94, 0x21, 0x6a, 0xff],
+                [0xff, 0x00, 0x4d, 0xff]
+            ]
         }
     }
 
@@ -292,6 +313,7 @@ impl World {
                 self.stack.clone(),
                 self.routines.clone(),
                 &self.tx,
+                &mut self.palette
             );
             self.heap = evaled.2;
             self.stack = evaled.1;
@@ -311,6 +333,7 @@ impl World {
                 self.stack.clone(),
                 self.routines.clone(),
                 &self.tx,
+                &mut self.palette
             );
             self.heap = evaled.2;
             self.stack = evaled.1;
@@ -326,26 +349,7 @@ impl World {
             let x = (&i % WIDTH as usize) / 2;
             let y = (&i / WIDTH as usize) / 2;
 
-            let rgba = match &self.pix_buffer[y][x] {
-                // i probably could have made this a lot easier
-                0x00 => [0x00, 0x00, 0x00, 0xff],
-                0x01 => [0xab, 0x52, 0x36, 0xff],
-                0x02 => [0xff, 0xf1, 0xe8, 0xff],
-                0x03 => [0xff, 0x84, 0x26, 0xff],
-                0x04 => [0x5f, 0x57, 0x4f, 0xff],
-                0x05 => [0xff, 0xdd, 0x34, 0xff],
-                0x06 => [0x50, 0xe1, 0x12, 0xff],
-                0x07 => [0x3f, 0xa6, 0x6f, 0xff],
-                0x08 => [0x00, 0xff, 0xcc, 0xff],
-                0x09 => [0x29, 0xad, 0xff, 0xff],
-                0x0a => [0x36, 0x59, 0x87, 0xff],
-                0x0b => [0x00, 0x33, 0xff, 0xff],
-                0x0c => [0xc2, 0xc3, 0xc7, 0xff],
-                0x0d => [0x43, 0x00, 0x67, 0xff],
-                0x0e => [0x94, 0x21, 0x6a, 0xff],
-                0x0f => [0xff, 0x00, 0x4d, 0xff],
-                _ => [0x00, 0x00, 0x00, 0xff],
-            };
+            let rgba = self.palette[self.pix_buffer[y][x] as usize];
 
             pixel.copy_from_slice(&rgba);
         }
@@ -362,6 +366,7 @@ impl World {
                 self.stack.clone(),
                 self.routines.clone(),
                 &self.tx,
+                &mut self.palette
             );
             self.heap = evaled.2;
             self.stack = evaled.1;

@@ -56,7 +56,7 @@ FLC16 uses the [Go-Line Palette](https://lospec.com/palette-list/go-line)
     - If the condition is 0, it is `zero`. If it is any other number, it is `nonzero`
 * `greaterthan` Pop A and B, push 1 if A\>B otherwise push 0
 * `lessthan` Pop A and B, push 1 if A\<B otherwise push 0
-* `sprite` Pop X and Y, and write the following bytes directly to video memory, line separated by 0xfe. e.g. `sprite 1 1 0xfe 2 2 0xfe 3 3`
+* `sprite` Pop X and Y, and write the following bytes directly to video memory, line separated by 0xfe. Use 0xee for a blank pixel. e.g. `sprite 1 1 0xfe 2 2 0xfe 3 3`
 * `bitnot` Pop A, push !A
 * `bitand` Pop A and B, push A&B
 * `bitor` Pop A and B, push A\|B
@@ -70,6 +70,7 @@ FLC16 uses the [Go-Line Palette](https://lospec.com/palette-list/go-line)
 * `noise` Pop only Length. Queue a Noise sound to be played
 * `empty` Empty the sound queue and stop the player
 * `alias` Create a textual alias for a u16 number. Reference it in `routine` or `push` with a `$` prefix e.g. `alias my_address 0x1234; push $my_address` 
+* `color` Replace a color in the color palette with an RGB color of your own. e.g. `color 5 0xd1 0xa0 0xf2`
 
 ## Reserved Addresses:
 ### Routines:
