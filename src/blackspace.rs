@@ -47,6 +47,9 @@ pub fn bs() {
                         }
                     }
                 }
+                "line" => {
+                    bytes.push(0x21);
+                }
                 "push" => {
                     for mut byte in segs {
                         bytes.push(3);
@@ -197,13 +200,23 @@ pub fn bs() {
                 "repeat" => {
                     bytes.push(0x1b);
                     let mut byte = segs.next().unwrap();
-                    let radix: u32 = if byte.starts_with("0x") { 16 } else { 10 };
-                    if radix == 16 {
-                        byte = &byte[2..byte.len()]
+                    if byte.starts_with("$") {
+                        match aliases.get(&byte[1..byte.len()]) {
+                            Some(addr) => {
+                                bytes.push((addr >> 8) as u8);
+                                bytes.push(addr.to_owned() as u8);
+                            }
+                            None => panic!("{} is not a valid alias", byte),
+                        }
+                    } else {
+                        let radix: u32 = if byte.starts_with("0x") { 16 } else { 10 };
+                        if radix == 16 {
+                            byte = &byte[2..byte.len()]
+                        }
+                        let addr = u16::from_str_radix(byte, radix).unwrap();
+                        bytes.push((addr >> 8) as u8);
+                        bytes.push(addr as u8);
                     }
-                    let addr = u16::from_str_radix(byte, radix).unwrap();
-                    bytes.push((addr >> 8) as u8);
-                    bytes.push(addr as u8);
                 }
                 "beep" => {
                     bytes.push(0x1c);

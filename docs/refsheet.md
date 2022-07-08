@@ -34,7 +34,7 @@ FLC16 uses the [Go-Line Palette](https://lospec.com/palette-list/go-line)
 * 15 Red #ff004d
 
 ## Blackspace keywords
-* `store` Pop three bytes (Value, X, and Y) and set the heap address 0xXY equal to Value
+* `store` Pop three bytes (X, Y, and Value) and set the heap address 0xXY equal to Value
 * `get` Pop two bytes (X and Y) and push the value at heap address 0xXY
 * `print` Print the stack to console (useful for debugging)
 * `push` Push the following byte(s) to the stack. e.g. `push 1; push 0xff 0xee;`
@@ -71,6 +71,7 @@ FLC16 uses the [Go-Line Palette](https://lospec.com/palette-list/go-line)
 * `empty` Empty the sound queue and stop the player
 * `alias` Create a textual alias for a u16 number. Reference it in `routine` or `push` with a `$` prefix e.g. `alias my_address 0x1234; push $my_address` 
 * `color` Replace a color in the color palette with an RGB color of your own. e.g. `color 5 0xd1 0xa0 0xf2`
+* `line` Pop X1 Y1 X2 Y2 and Color, then draw a line from (X1, Y1) to (X2, Y2) with that color.
 
 ## Reserved Addresses:
 ### Routines:

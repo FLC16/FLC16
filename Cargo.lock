@@ -142,6 +142,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0d8c1fef690941d3e7788d328517591fecc684c084084702d6ff1641e993699a"
 
 [[package]]
+name = "bresenham"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bfc1116225f66d2ea341a26503f83a6b1205070a6f7199ce1f1550ead91f6fd7"
+
+[[package]]
 name = "bumpalo"
 version = "3.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -664,6 +670,7 @@ dependencies = [
 name = "flc16"
 version = "0.1.0"
 dependencies = [
+ "bresenham",
  "env_logger",
  "image",
  "log",

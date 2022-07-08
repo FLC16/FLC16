@@ -1,5 +1,6 @@
 use rand::prelude::*;
 use std::sync::mpsc::Sender;
+use bresenham::Bresenham;
 
 pub fn bcode(
     bytes: &[u8],
@@ -305,6 +306,17 @@ pub fn bcode(
                 let b = bytes[index + 4];
                 palette[color_index as usize] = [r,g,b,0xff];
                 index += 4;
+            }
+            0x21 => {
+                // line
+                let y2 = stack.pop().unwrap().to_owned() as isize;
+                let x2 = stack.pop().unwrap().to_owned() as isize;
+                let y1 = stack.pop().unwrap().to_owned() as isize;
+                let x1 = stack.pop().unwrap().to_owned() as isize;
+                let color_index = stack.pop().unwrap().to_owned();
+                for (x, y) in Bresenham::new((x1, y1), (x2, y2)) {
+                    pix_buffer[y as usize][x as usize] = color_index;
+                }
             }
             _ => {
                 panic!("Unknown Command {}", byte);

@@ -91,3 +91,17 @@ It takes 4 arguments: Color index, R, G, and B
 # change the 3rd color from white to pink (remember indexes start at 0, so the index will be 2)
 color 2 0xd1 0xa0 0xf2
 ```
+
+You may need to draw lines at some point, and writing a line drawing algorithm by yourself is a huge pain! I've decided to give you a function that speeds up the process.
+```bs
+# color white
+push 2
+
+# first point, (0,0)
+push 0 0
+
+# second point, (5, 10)
+push 5 10
+
+line
+```
