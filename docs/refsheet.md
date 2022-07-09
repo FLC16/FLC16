@@ -30,7 +30,7 @@ FLC16 uses the [Go-Line Palette](https://lospec.com/palette-list/go-line)
 * 11 Blue #0033ff
 * 12 Light grey #c2c3c7
 * 13 Purple #430067
-* 14 Magenta #430067
+* 14 Magenta #94216a
 * 15 Red #ff004d
 
 ## Blackspace keywords
