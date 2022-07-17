@@ -92,16 +92,14 @@ It takes 4 arguments: Color index, R, G, and B
 color 2 0xd1 0xa0 0xf2
 ```
 
-You may need to draw lines at some point, and writing a line drawing algorithm by yourself is a huge pain! I've decided to give you a function that speeds up the process.
+Drawing text using sprites sounds annoying. Have a text tool.
 ```bs
-# color white
+# color green
+push 6
+# y coordinate
+push 10
+# x coordinate
 push 2
 
-# first point, (0,0)
-push 0 0
-
-# second point, (5, 10)
-push 5 10
-
-line
+text Hello, World!
 ```

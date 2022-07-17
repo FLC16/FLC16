@@ -55,4 +55,32 @@ push 5 5
 sprite 0 2 0 2 0xFE 2 0 2 0 0xFE 0 2 0 2 0xFE 2 0 2 0
 ```
 
+You may need to draw lines at some point, and writing a line drawing algorithm by yourself is a huge pain! I've decided to give you a function that speeds up the process.
+```bs
+# color white
+push 2
+
+# first point, (0,0)
+push 0 0
+
+# second point, (5, 10)
+push 5 10
+
+line
+```
+
+You can also draw rectangles in the same manner as lines.
+```bs
+# color white
+push 2
+
+# first point, (3,7)
+push 3 7
+
+# width and height, (5, 10)
+push 5 10
+
+rectangle
+```
+
 Next lets look at [logic](07-logic.md)

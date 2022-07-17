@@ -72,6 +72,8 @@ FLC16 uses the [Go-Line Palette](https://lospec.com/palette-list/go-line)
 * `alias` Create a textual alias for a u16 number. Reference it in `routine` or `push` with a `$` prefix e.g. `alias my_address 0x1234; push $my_address` 
 * `color` Replace a color in the color palette with an RGB color of your own. e.g. `color 5 0xd1 0xa0 0xf2`
 * `line` Pop X1 Y1 X2 Y2 and Color, then draw a line from (X1, Y1) to (X2, Y2) with that color.
+* `rectangle` Pop X Y Width Height and Color, then draw a rectangle starting at (X, Y) with that width, height, and color.
+* `text` Pop X Y and Color, then draw text to the screen at that coordinate. e.g. `text Hello, World!`
 
 ## Reserved Addresses:
 ### Routines:

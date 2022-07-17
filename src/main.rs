@@ -22,6 +22,7 @@ use winit::event_loop::{ControlFlow, EventLoop};
 use winit::window::{Icon, WindowBuilder};
 use winit_input_helper::WinitInputHelper;
 mod blackspace;
+mod text;
 mod eval;
 mod waves;
 
@@ -99,26 +100,8 @@ fn main() -> Result<(), Error> {
             world.stack = evaled.1;
             world.routines = evaled.0;
         } else {
-            let image = image::load_from_memory(
-                include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/icon/nodisk.png")))
-                .expect("Failed to open icon path")
-                .into_rgb8();
-            let mut x = 0;
-            let mut y = 0;
-            for pix in image.pixels() {
-                world.pix_buffer[y][x] = match pix.0[0] {
-                    67 => 0x0d,
-                    148 => 0x0e,
-                    54 => 0x0a,
-                    255 => 0x02,
-                    _ => 0x00,
-                };
-                x = x + 1;
-                if x > 255 {
-                    x = 0;
-                    y = y + 1;
-                }
-            }
+            text::draw_text(&"No disk has been loaded.\nPress \"o\" on your keyboard to choose a disk to load.".to_string(),
+                &2u16, &2u16, 2u8, &mut world.pix_buffer);
         }
 
         event_loop.run(move |event, _, control_flow| {
@@ -168,13 +151,14 @@ fn main() -> Result<(), Error> {
                 }
                 if input.key_pressed(VirtualKeyCode::O) {
                     let path = FileDialog::new()
-                        .add_filter("FLC Disk", &["flc"])
+                        .add_filter("FLC16 Disk", &["flc"])
                         .show_open_single_file()
                         .unwrap();
 
                     match path {
                         Some(path) => {
                             let contents = fs::read(path).expect("Something went wrong reading the file");
+                            world.pix_buffer = [[0u8; 256]; 144];
                             world.bytes = contents;
                             let evaled = eval::bcode(
                                 &world.bytes,

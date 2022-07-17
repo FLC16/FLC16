@@ -9,10 +9,9 @@ pub fn bs() {
     let args: Vec<String> = env::args().collect();
     if &args.len() > &1 && Path::new(&args[2]).exists() {
         let contents = fs::read_to_string(&args[2]).expect("Something went wrong reading the file");
-        let formatted = Regex::new(r"\r?\n")
-            .unwrap()
-            .replace_all(&contents, ";")
-            .to_lowercase();
+        let nocomments = Regex::new(r"#.+").unwrap().replace_all(&contents, "");
+        let formatted = Regex::new(r"\r?\n").unwrap()
+            .replace_all(&nocomments, ";").to_lowercase();
         let commands = formatted.split(';');
         let mut aliases: HashMap<String, u16> = HashMap::new();
         let mut bytes: Vec<u8> = Vec::new();
@@ -49,6 +48,19 @@ pub fn bs() {
                 }
                 "line" => {
                     bytes.push(0x21);
+                }
+                "rectangle" => {
+                    bytes.push(0x22);
+                }
+                "text" => {
+                    bytes.push(0x23);
+                    for word in segs {
+                        for byte in word.chars() {
+                            bytes.push(byte as u8);
+                        }
+                        bytes.push(0x20);
+                    }
+                    bytes.push(0xff);
                 }
                 "push" => {
                     for mut byte in segs {
@@ -235,6 +247,7 @@ pub fn bs() {
         }
         let mut file = fs::File::create(format!("{}.flc", &args[2])).unwrap();
         file.write(bytes.as_slice()).unwrap();
+        println!("{} bytes written to {}.flc", bytes.len(), &args[2]);
     } else {
         println!("Please specify a filename to read, or ensure the file you provided exists");
     }
